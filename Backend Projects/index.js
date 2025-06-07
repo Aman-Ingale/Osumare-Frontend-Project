@@ -14,7 +14,7 @@ app.use(express.urlencoded({ extended: false }))
 * Returns false if any of the field is undefined
 */
 function validateTask(data) {
-    if (!data.task_name || !data.due_date || !data.priority || !data.completed) {
+    if (!data.task_name || !data.due_date || !data.priority) {
         return false;
     }
     return true;
@@ -43,6 +43,7 @@ app.route("/tasks")
             const task = { id: tasks.length + 1, ...body };
             tasks.push(task)
             fs.writeFile('./MOCK_DATA.json', JSON.stringify(tasks), (err, data) => {
+                if (err) return res.status(500).json({ error: 'Failed to create task.' });
                 return res.status(201).json({ message: "Task Created",data:task});
             })
         } catch (error) {
@@ -63,7 +64,7 @@ app.route("/tasks/:id")
         const { id } = req.params
         const index = tasks.findIndex(task => task.id == id);
         if (index == -1) {
-            return res.status(400).json({ error: 'Task not found.' });
+            return res.status(404).json({ error: 'Task not found.' });
         } return res.status(200).json(tasks[index])
     })
     /**
@@ -76,7 +77,7 @@ app.route("/tasks/:id")
             const { task_name, due_date, priority, completed } = req.body;
             const index = tasks.findIndex(task => task.id == id);
             if (index == -1) {
-                return res.status(400).json({ error: 'Task not found.' });
+                return res.status(404).json({ error: 'Task not found.' });
             }
             if (task_name != undefined) tasks[index].task_name = task_name;
             if (due_date != undefined) tasks[index].due_date = due_date;
@@ -84,6 +85,7 @@ app.route("/tasks/:id")
             if (completed != undefined) tasks[index].completed = completed;
             console.log(tasks[index])
             fs.writeFile('./MOCK_DATA.json', JSON.stringify(tasks), (err, data) => {
+                if (err) return res.status(500).json({ error: 'Failed to update task.' });
                 return res.status(200).json({ message: "Task Updated" ,data:tasks[index]})
             })
         } catch (error) {
@@ -99,11 +101,12 @@ app.route("/tasks/:id")
             const { id } = req.params;
             const index = tasks.findIndex(task => task.id == id);
             if (index == -1) {
-                return res.status(500).json({ error: 'Task not found.' });
+                return res.status(404).json({ error: 'Task not found.' });
             }
             const task = tasks[index]
             tasks.splice(index, 1);
             fs.writeFile('./MOCK_DATA.json', JSON.stringify(tasks), (err, data) => {
+                if (err) return res.status(500).json({ error: 'Failed to delete task.' });
                 return res.json({ message: "Task Deleted",data:task})
             })
         } catch (error) {
