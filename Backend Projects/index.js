@@ -6,9 +6,9 @@ const fs = require("fs")
 // Importing task data from local JSON file
 const tasks = require("./MOCK_DATA.json")
 
-// Middleware to parse URL-encoded form data
+// Middleware to parse URL-encoded form data and json bodies
 app.use(express.urlencoded({ extended: false }))
-
+app.use(express.json()); 
 /** 
 * Validation function
 * Returns false if any of the field is undefined

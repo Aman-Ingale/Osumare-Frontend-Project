@@ -6,7 +6,7 @@ A simple RESTful API built with Express.js to perform CRUD operations on tasks s
 ## Base URL `https://localhost:8000`
 
 ## Endpoints
-
+#### Note : Content-Type: application/x-www-form-urlencoded
 ### GET `/tasks`
 - **Description:** Get all tasks.
 
